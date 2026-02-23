@@ -48,7 +48,7 @@ tk start → Codex writes code → CC executes & validates → tk close → repe
    chmod +x ~/.claude/skills/ai-collab/hooks/*.sh
    ```
 
-3. Add hooks to your global settings (`~/.claude/settings.json`):
+3. Add permissions to your global settings (`~/.claude/settings.json`):
    ```json
    {
      "permissions": {
@@ -56,7 +56,22 @@ tk start → Codex writes code → CC executes & validates → tk close → repe
          "Bash(~/.claude/skills/ai-collab/scripts/*)",
          "Bash(~/.claude/skills/ai-collab/hooks/*)"
        ]
-     },
+     }
+   }
+   ```
+
+4. **(Optional) Add hooks based on your needs.** The `hooks/` directory provides several safety hooks — pick and choose what fits your workflow:
+
+   | Hook | What it does | When to use |
+   |------|-------------|-------------|
+   | `collab-continue.sh` | Prevents Claude Code from exiting mid-collaboration | You want to ensure workflows run to completion |
+   | `pre-deploy-check.sh` | Blocks `deploy`/`git push`/`npm publish` without Codex review | You want deployment gating |
+   | `enforce-plan-approval.sh` | Requires explicit plan approval before execution | You want stricter planning control |
+   | `enforce-codex-writes.sh` | Ensures only Codex writes code during execution phase | You want strict role separation |
+
+   Example — adding the stop guard and deploy gate:
+   ```json
+   {
      "hooks": {
        "Stop": [
          {
@@ -75,6 +90,8 @@ tk start → Codex writes code → CC executes & validates → tk close → repe
      }
    }
    ```
+
+   > **Permission note:** Adding hooks to `~/.claude/settings.json` means they apply to **all** your projects globally. If you only want hooks active for specific projects, add them to `<project>/.claude/settings.json` instead. The `permissions.allow` entries grant the scripts the right to execute without prompting — review them and only allow what you're comfortable with.
 
 ### Usage
 
@@ -276,7 +293,7 @@ tk start → Codex 写代码 → CC 执行验证 → tk close → 重复直到�
    chmod +x ~/.claude/skills/ai-collab/hooks/*.sh
    ```
 
-3. 在全局设置 (`~/.claude/settings.json`) 中添加 hooks：
+3. 在全局设置 (`~/.claude/settings.json`) 中添加权限：
    ```json
    {
      "permissions": {
@@ -284,25 +301,42 @@ tk start → Codex 写代码 → CC 执行验证 → tk close → 重复直到�
          "Bash(~/.claude/skills/ai-collab/scripts/*)",
          "Bash(~/.claude/skills/ai-collab/hooks/*)"
        ]
-     },
+     }
+   }
+   ```
+
+4. **（可选）根据需要添加 hooks。** `hooks/` 目录提供了多个安全钩子——按需选用：
+
+   | Hook | 功能 | 适用场景 |
+   |------|------|----------|
+   | `collab-continue.sh` | 阻止 Claude Code 在协作中途退出 | 你希望确保工作流完整执行 |
+   | `pre-deploy-check.sh` | 拦截 `deploy`/`git push`/`npm publish` 直到 Codex 审查通过 | 你需要部署门禁 |
+   | `enforce-plan-approval.sh` | 要求执行前必须明确批准计划 | 你需要更严格的规划控制 |
+   | `enforce-codex-writes.sh` | 确保执行阶段只有 Codex 写代码 | 你需要严格的角色分离 |
+
+   示例 — 添加退出保护和部署门禁：
+   ```json
+   {
      "hooks": {
        "Stop": [
          {
            "matcher": "*",
            "hooks": [{"type": "command", "command": "~/.claude/skills/ai-collab/hooks/collab-continue.sh"}],
-           "description": "[AI-Collab] Prevent exit until workflow completes"
+           "description": "[AI-Collab] 工作流完成前阻止退出"
          }
        ],
        "PreToolUse": [
          {
            "matcher": "tool == \"Bash\" && tool_input.command matches \"(deploy|git push|npm publish)\"",
            "hooks": [{"type": "command", "command": "~/.claude/skills/ai-collab/hooks/pre-deploy-check.sh"}],
-           "description": "[AI-Collab] Block deployment without Codex review"
+           "description": "[AI-Collab] 未经 Codex 审查不允许部署"
          }
        ]
      }
    }
    ```
+
+   > **权限说明：** 将 hooks 添加到 `~/.claude/settings.json` 意味着它们会**全局生效**于所有项目。如果你只希望特定项目启用 hooks，请添加到 `<project>/.claude/settings.json`。`permissions.allow` 条目授予脚本免提示执行的权限——请审查这些条目，只允许你确认安全的操作。
 
 ### 使用方法
 
