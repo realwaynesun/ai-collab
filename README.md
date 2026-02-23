@@ -31,9 +31,12 @@ tk start → Codex writes code → CC executes & validates → tk close → repe
    npm install -g @openai/codex
    codex login
    ```
-3. **tk CLI** (optional but recommended) - Git-native ticket tracking:
-   - If `tk` is available, each execution step becomes a trackable ticket
-   - If not installed, the workflow proceeds without ticket tracking
+3. **tk CLI** (optional) - Git-native ticket tracking powered by [wedow/ticket](https://github.com/wedow/ticket):
+   ```bash
+   brew tap wedow/tools && brew install ticket
+   ```
+   - If `tk` is available, each execution step becomes a trackable ticket with dependency tracking
+   - If not installed, the workflow works the same — just without ticket tracking
 
 ### Installation
 
@@ -276,9 +279,12 @@ tk start → Codex 写代码 → CC 执行验证 → tk close → 重复直到�
    npm install -g @openai/codex
    codex login
    ```
-3. **tk CLI**（可选但推荐）- Git 原生工单追踪：
-   - 如果 `tk` 可用，每个执行步骤都会成为可追踪的工单
-   - 如果未安装，工作流将在没有工单追踪的情况下继续
+3. **tk CLI**（可选）- 基于 [wedow/ticket](https://github.com/wedow/ticket) 的 Git 原生工单追踪：
+   ```bash
+   brew tap wedow/tools && brew install ticket
+   ```
+   - 如果 `tk` 可用，每个执行步骤会自动创建可追踪的工单并管理依赖关系
+   - 如果未安装，工作流正常运行，只是没有工单追踪
 
 ### 安装
 
