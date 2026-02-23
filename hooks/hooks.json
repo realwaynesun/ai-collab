@@ -1,0 +1,39 @@
+{
+  "description": "AI-Collab workflow enforcement hooks",
+  "hooks": {
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_SKILL_ROOT}/hooks/collab-continue.sh"
+          }
+        ],
+        "description": "Auto-continue: inject recovery prompt when Claude tries to exit during active collab"
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "tool == \"Bash\" && tool_input.command matches \"(deploy|git push|npm publish|docker push)\"",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_SKILL_ROOT}/hooks/pre-deploy-check.sh"
+          }
+        ],
+        "description": "Block deployment without Codex code review"
+      },
+      {
+        "matcher": "tool == \"Edit\" || tool == \"Write\"",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_SKILL_ROOT}/hooks/enforce-codex-writes.sh"
+          }
+        ],
+        "description": "During execution phase, code should come from Codex"
+      }
+    ]
+  }
+}
